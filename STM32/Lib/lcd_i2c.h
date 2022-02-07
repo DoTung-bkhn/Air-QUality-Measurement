@@ -3,7 +3,6 @@
 
 #include "main.h"
 #include <stdio.h>
-#include <stdarg.h>
 
 #define CLEAR_DISPLAY		0x01
 #define RETURN_HOME		0x02
