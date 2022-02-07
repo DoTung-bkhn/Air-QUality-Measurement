@@ -56,8 +56,8 @@ UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 LCD_HandleTypeDef lcd = {&hi2c2,0x4E};				//LCD I2C Handle
-uint16_t ppm;																	//PPM value
-DHT_Value value;															//Temp & Humid								
+uint16_t ppm;							//PPM value
+DHT_Value value;						//Temp & Humid								
 char first_line[16];
 char second_line[16];
 char uart_string[20];
@@ -78,39 +78,39 @@ static void MX_I2C2_Init(void);
 /* USER CODE BEGIN 0 */
 void update_data()
 {
-	static uint32_t update_tick = 0;
+  static uint32_t update_tick = 0;
 	
-	if(HAL_GetTick() - update_tick >= 3000)
-		{
-			DHT_ReadData(&value);
-			if(value.check)
-			{
-				MQ135_Read(&hadc1,value.temp,value.humid,&ppm);
-				sprintf(first_line,"%.1f%cC   %.1f%%",value.temp,0xDF,value.humid);
-				sprintf(second_line,"CO2: %d ppm",ppm);
-			}
-			else 
-				sprintf(first_line,"DHT Read Fail");
-			LCD_I2C_Send_Cmd(CLEAR_DISPLAY);
-			LCD_I2C_Send_Cmd(RETURN_HOME);
-			LCD_I2C_Set_Cursor(1);
-			LCD_I2C_Send_String(first_line);
-			LCD_I2C_Set_Cursor(17);
-			LCD_I2C_Send_String(second_line);
-			update_tick = HAL_GetTick();
-		}
+  if(HAL_GetTick() - update_tick >= 3000)
+  {
+    DHT_ReadData(&value);
+    if(value.check)
+    {
+      MQ135_Read(&hadc1,value.temp,value.humid,&ppm);
+      sprintf(first_line,"%.1f%cC   %.1f%%",value.temp,0xDF,value.humid);
+      sprintf(second_line,"CO2: %d ppm",ppm);
+    }
+    else 
+      sprintf(first_line,"DHT Read Fail");
+    LCD_I2C_Send_Cmd(CLEAR_DISPLAY);
+    LCD_I2C_Send_Cmd(RETURN_HOME);
+    LCD_I2C_Set_Cursor(1);
+    LCD_I2C_Send_String(first_line);
+    LCD_I2C_Set_Cursor(17);
+    LCD_I2C_Send_String(second_line);
+    update_tick = HAL_GetTick();
+  }
 }
 
 void transmit_data()
 {
-	static uint32_t transmit_tick = 0;
+  static uint32_t transmit_tick = 0;
 	
-	if(HAL_GetTick() - transmit_tick >= 4000)
-	{
-		sprintf(uart_string,"%.1f-%.1f-%d",value.temp,value.humid,ppm);
-		HAL_UART_Transmit(&huart1,(uint8_t *)uart_string,strlen(uart_string),1000);
-		transmit_tick = HAL_GetTick();
-	}
+  if(HAL_GetTick() - transmit_tick >= 4000)
+  {
+    sprintf(uart_string,"%.1f-%.1f-%d",value.temp,value.humid,ppm);
+    HAL_UART_Transmit(&huart1,(uint8_t *)uart_string,strlen(uart_string),1000);
+    transmit_tick = HAL_GetTick();
+  }
 }
 /* USER CODE END 0 */
 
@@ -147,8 +147,8 @@ int main(void)
   MX_USART1_UART_Init();
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
-	DHT_Init(DHT22,GPIOB,GPIO_PIN_8,htim1);
-	LCD_I2C_Init(&lcd);
+  DHT_Init(DHT22,GPIOB,GPIO_PIN_8,htim1);
+  LCD_I2C_Init(&lcd);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -158,8 +158,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		update_data();
-		transmit_data();
+    update_data();
+    transmit_data();
   }
   /* USER CODE END 3 */
 }
